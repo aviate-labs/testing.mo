@@ -1,6 +1,5 @@
-// TODO: replace with vessel package.
-import Assert "../../src/Assert";
-import { describe; it; Suite } = "../../src/Suite";
+import Assert "mo:testing/Assert";
+import { describe; it; Suite } = "mo:testing/Suite";
 
 import Math "../src/Math";
 

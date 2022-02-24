@@ -7,7 +7,8 @@ Inspired by Mocha and Chai 🍵.
 ## Example
 
 ```shell
-$(vessel bin)/moc -r example/test/add.test.mo
+# cd example
+$(vessel bin)/moc -r $(vessel sources) test/add.test.mo
 ```
 
 ```text
