@@ -1,5 +1,7 @@
-import Assert "mo:testing/Assert";
-import { describe; it; Suite } = "mo:testing/Suite";
+// import { testifyElement } = "mo:testing/Testify";
+// import { describe; it; Suite } = "mo:testing/Suite";
+import { testifyElement; Testify } = "../../src/Testify";
+import { describe; it; equal; Suite } = "../../src/Suite";
 
 import Math "../src/Math";
 
@@ -19,21 +21,13 @@ s.before(func (s : State) {
 
 s.run([
     describe("Add", [
-        it("a + 2 = 12", func (st : State) : Bool {
-            st.a + 2 == 12;
-        }),
-        it("Some sums...", Assert.it.all([
-            Assert.isTrue(1 + 2 == 3),
-            Assert.isTrue(2 + 2 == 4),
-            // etc...
-        ])),
-        it("This test will fail.", Assert.it.isTrue(
-            1 + 1 == 3
+        it("add 2", equal(
+            testifyElement(Testify.nat, 12), 
+            func (s : State) : Nat { s.a + 2 }
         )),
-        describe("More!", [
-            it("a + b = ?", func (st : State) : Bool {
-                st.a + st.b == 10;
-            }),
-        ]),
+        it("oops...", equal(
+            testifyElement(Testify.nat, 12), 
+            func (s : State) : Nat { s.a }
+        )),
     ]),
 ]);

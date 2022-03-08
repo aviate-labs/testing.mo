@@ -1,8 +1,23 @@
 import { debugPrint } = "mo:⛔";
+import Testify "Testify";
 
 module {
-    public type Test<T>    = (t : T) -> Bool;
-    public type Testing<T> = (t : T) -> ();
+    public type Test<T> = (
+        state : T,
+        print : (t : Text) -> ()
+    ) -> Bool;
+
+    public func equal<T, E>(
+        testify  : Testify.TestifyElement<E>,
+        actual   : (state: T) -> E
+    ) : Test<T> = func (state : T, print: (t : Text) -> ()) : Bool {
+        let a = actual(state);
+        let b = testify.equal(testify.element, a);
+        if (not b) print("💬 expected: " # testify.toText(testify.element) # ", actual: " # testify.toText(a));
+        b;
+    };
+
+    public type Testing<T> = (state : T) -> ();
 
     public type NamedTest<T> = {
         #Describe : (Text, [NamedTest<T>]);
@@ -64,7 +79,8 @@ module {
 
         private func _run(tests : [NamedTest<T>]) {
             _before(state);
-            for (t in tests.vals()) {
+            for (k in tests.keys()) {
+                let t = tests[k];
                 switch (t) {
                     case (#Describe(name, tests)) {
                         print("");
@@ -75,7 +91,8 @@ module {
                     };
                     case (#Test(name, test)) {
                         _beforeEach(state);
-                        if (test(state)) {
+                        if (k != 0) print("");
+                        if (test(state, print)) {
                             print("🟢 " # name);
                             s.pass();
                         } else {

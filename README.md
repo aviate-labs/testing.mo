@@ -8,17 +8,22 @@ Inspired by Mocha and Chai 🍵.
 
 ```shell
 # cd example
-$(vessel bin)/moc -r $(vessel sources) test/add.test.mo
+# $(vessel bin)/moc -r $(vessel sources) test/add.test.mo
+$(vessel bin)/moc -r test/add.test.mo
 ```
 
 ```text
 📄 Add
-  🟢 a + 2 = 12
-  🟢 Some sums...
-  🛑 This test will fail.
+  🟢 add 2
   
-  📄 More!
-    🟢 a + b = ?
+  💬 expected: 12, actual: 10
+  🛑 oops...
 
-🟢 3/4 | 🛑 1/4
+🟢 1/2 | 🛑 1/2
 ```
+
+## Modules
+
+### Testify
+
+A module to make a types test 'ready'.
