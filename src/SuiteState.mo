@@ -3,17 +3,21 @@ import Testify "Testify";
 
 module {
     public type Test<T> = (
+        state : T,
         print : (t : Text) -> ()
     ) -> Bool;
 
     public func equal<T, E>(
         testify  : Testify.TestifyElement<E>,
-        actual   : E
-    ) : Test<T> = func (print: (t : Text) -> ()) : Bool {
-        let b = testify.equal(testify.element, actual);
-        if (not b) print("💬 expected: " # testify.toText(testify.element) # ", actual: " # testify.toText(actual));
+        actual   : (state: T) -> E
+    ) : Test<T> = func (state : T, print: (t : Text) -> ()) : Bool {
+        let a = actual(state);
+        let b = testify.equal(testify.element, a);
+        if (not b) print("💬 expected: " # testify.toText(testify.element) # ", actual: " # testify.toText(a));
         b;
     };
+
+    public type Testing<T> = (state : T) -> ();
 
     public type NamedTest<T> = {
         #Describe : (Text, [NamedTest<T>]);
@@ -43,8 +47,22 @@ module {
         };
     };
 
+    private func doNothing<T>() : Testing<T> { func (_ : T) {} };
+
     public class Suite<T>(state : T) {
         let s : Status = Status();
+
+        var _before : Testing<T> = doNothing<T>();
+        public func before(c : Testing<T>) { _before := c; };
+
+        var _beforeEach : Testing<T> = doNothing<T>();
+        public func beforeEach(c : Testing<T>) { _beforeEach := c; };
+
+        var _after : Testing<T> = doNothing<T>();
+        public func after(c : Testing<T>) { _after := c; };
+
+        var _afterEach : Testing<T> = doNothing<T>();
+        public func afterEach(c : Testing<T>) { _afterEach := c; };
 
         var indent = 0;
         public func print(t : Text) {
@@ -60,6 +78,7 @@ module {
         };
 
         private func _run(tests : [NamedTest<T>]) {
+            _before(state);
             for (k in tests.keys()) {
                 let t = tests[k];
                 switch (t) {
@@ -71,17 +90,20 @@ module {
                         indent -= 1;
                     };
                     case (#Test(name, test)) {
+                        _beforeEach(state);
                         if (k != 0) print("");
-                        if (test(print)) {
+                        if (test(state, print)) {
                             print("🟢 " # name);
                             s.pass();
                         } else {
                             print("🛑 " # name);
                             s.fail();
                         };
+                        _afterEach(state);
                     };
                 };
             };
+            _after(state);
         };
     };
 };

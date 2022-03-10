@@ -1,7 +1,7 @@
 // import { testifyElement } = "mo:testing/Testify";
 // import { describe; it; Suite } = "mo:testing/Suite";
 import { testifyElement; Testify } = "../../src/Testify";
-import { describe; it; equal; Suite } = "../../src/Suite";
+import { describe; it; equal; Suite } = "../../src/SuiteState";
 
 import Math "../src/Math";
 
