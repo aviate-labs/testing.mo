@@ -24,7 +24,11 @@ module {
         #Describe(name, tests);
     };
 
-    public func it<T>(name : Text, test : Test<T>) : NamedTest<T> {
+    public func it<T>(name : Text, test : () -> Bool) : NamedTest<T> {
+        #Test(name, func (print : (t : Text) -> ()) : Bool = test());
+    };
+
+    public func itf<T>(name : Text, test : Test<T>) : NamedTest<T> {
         #Test(name, test);
     };
 
