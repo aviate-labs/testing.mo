@@ -1,4 +1,5 @@
 import { debugPrint } = "mo:⛔";
+import Status "Status";
 import Testify "Testify";
 
 module {
@@ -36,25 +37,10 @@ module {
         #Test(name, test);
     };
 
-    private class Status() {
-        var _pass = 0;
-        public func pass() { _pass += 1 };
-        public func passed() : Nat { _pass };
-
-        var _fail = 0;
-        public func fail() { _fail += 1 };
-        public func failed() : Nat { _fail };
-
-        public func printStatus() {
-            let total = debug_show(_pass + _fail);
-            debugPrint("🟢 " # debug_show(_pass) # "/" # total # " | 🛑 " # debug_show(_fail) # "/" # total # "\n");
-        };
-    };
-
     private func doNothing<T>() : Testing<T> { func (_ : T) {} };
 
     public class Suite<T>(state : T) {
-        let s : Status = Status();
+        let s = Status.Status();
 
         var _before : Testing<T> = doNothing<T>();
         public func before(c : Testing<T>) { _before := c; };
