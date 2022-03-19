@@ -28,7 +28,7 @@ module {
         #Test(name, func (print : (t : Text) -> ()) : Bool = test());
     };
 
-    public func itf<T>(name : Text, test : Test<T>) : NamedTest<T> {
+    public func itp<T>(name : Text, test : Test<T>) : NamedTest<T> {
         #Test(name, test);
     };
 

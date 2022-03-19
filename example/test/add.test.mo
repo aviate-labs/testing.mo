@@ -1,7 +1,7 @@
 // import { testifyElement } = "mo:testing/Testify";
 // import { describe; it; Suite } = "mo:testing/Suite";
 import { testifyElement; Testify } = "../../src/Testify";
-import { describe; it; equal; Suite } = "../../src/SuiteState";
+import { describe; itp; equal; Suite } = "../../src/SuiteState";
 
 import Math "../src/Math";
 
@@ -21,11 +21,11 @@ s.before(func (s : State) {
 
 s.run([
     describe("Add", [
-        it("add 2", equal(
+        itp("add 2", equal(
             testifyElement(Testify.nat, 12), 
             func (s : State) : Nat { s.a + 2 }
         )),
-        it("oops...", equal(
+        itp("oops...", equal(
             testifyElement(Testify.nat, 12), 
             func (s : State) : Nat { s.a }
         )),
