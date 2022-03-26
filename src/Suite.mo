@@ -63,10 +63,10 @@ module {
                     case (#Test(name, test)) {
                         if (k != 0) print("");
                         if (test(print)) {
-                            print("🟢 " # name);
+                            print(debug_show(k) # ". 🟢 " # name);
                             s.pass();
                         } else {
-                            print("🛑 " # name);
+                            print(debug_show(k) #  ". 🛑 " # name);
                             s.fail();
                         };
                     };

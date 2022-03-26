@@ -14,10 +14,10 @@ $(vessel bin)/moc -r test/add.test.mo
 
 ```text
 📄 Add
-  🟢 add 2
+  0. 🟢 add 2
   
   💬 expected: 12, actual: 10
-  🛑 oops...
+  1. 🛑 oops...
 
 🟢 1/2 | 🛑 1/2
 ```

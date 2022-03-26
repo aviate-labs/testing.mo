@@ -83,10 +83,10 @@ module {
                         _beforeEach(state);
                         if (k != 0) print("");
                         if (test(state, print)) {
-                            print("🟢 " # name);
+                            print(debug_show(k) # ". 🟢 " # name);
                             s.pass();
                         } else {
-                            print("🛑 " # name);
+                            print(debug_show(k) # ". 🛑 " # name);
                             s.fail();
                         };
                         _afterEach(state);
