@@ -1,5 +1,3 @@
-⚠️ **WIP**
-
 # Testing Framework for Motoko
 
 Inspired by Mocha and Chai 🍵.
