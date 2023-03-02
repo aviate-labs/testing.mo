@@ -8,6 +8,11 @@ module {
         print : (t : Text) -> ()
     ) -> Bool;
 
+    public type TestAsync<T> = (
+        state : T,
+        print : (t : Text) -> ()
+    ) -> async* Bool;
+
     public func equal<T, E>(
         testify  : Testify.TestifyElement<E>,
         actual   : (state: T) -> E
@@ -21,8 +26,9 @@ module {
     public type Testing<T> = (state : T) -> ();
 
     public type NamedTest<T> = {
-        #Describe : (Text, [NamedTest<T>]);
-        #Test     : (Text, Test<T>);
+        #Describe  : (Text, [NamedTest<T>]);
+        #Test      : (Text, Test<T>);
+        #TestAsync : (Text, TestAsync<T>);
     };
 
     public func describe<T>(name : Text, tests : [NamedTest<T>]) : NamedTest<T> {
@@ -61,13 +67,13 @@ module {
             debugPrint(s # t);
         };
 
-        public func run(tests : [NamedTest<T>]) {
-            _run(tests);
+        public func run(tests : [NamedTest<T>]) : async* () {
+            await* _run(tests);
             debugPrint("");
             s.printStatus();
         };
 
-        private func _run(tests : [NamedTest<T>]) {
+        private func _run(tests : [NamedTest<T>]) : async* () {
             _before(state);
             for (k in tests.keys()) {
                 let t = tests[k];
@@ -76,13 +82,25 @@ module {
                         print("");
                         print("📄 " # name);
                         indent += 1;
-                        _run(tests);
+                        await* _run(tests);
                         indent -= 1;
                     };
                     case (#Test(name, test)) {
                         _beforeEach(state);
                         if (k != 0) print("");
                         if (test(state, print)) {
+                            print(debug_show(k) # ". 🟢 " # name);
+                            s.pass();
+                        } else {
+                            print(debug_show(k) # ". 🛑 " # name);
+                            s.fail();
+                        };
+                        _afterEach(state);
+                    };
+                    case (#TestAsync(name, test)) {
+                        _beforeEach(state);
+                        if (k != 0) print("");
+                        if (await* test(state, print)) {
                             print(debug_show(k) # ". 🟢 " # name);
                             s.pass();
                         } else {

@@ -7,6 +7,10 @@ module {
         print : (t : Text) -> ()
     ) -> Bool;
 
+    public type TestAsync = (
+        print : (t : Text) -> ()
+    ) -> async* Bool;
+
     public func equal<E>(
         testify  : Testify.TestifyElement<E>,
         actual   : E
@@ -17,8 +21,9 @@ module {
     };
 
     public type NamedTest = {
-        #Describe : (Text, [NamedTest]);
-        #Test     : (Text, Test);
+        #Describe  : (Text, [NamedTest]);
+        #Test      : (Text, Test);
+        #TestAsync : (Text, TestAsync);
     };
 
     public func describe(name : Text, tests : [NamedTest]) : NamedTest {
@@ -29,8 +34,16 @@ module {
         #Test(name, func (print : (t : Text) -> ()) : Bool = test());
     };
 
+    public func its(name : Text, test : () -> async* Bool) : NamedTest {
+        #TestAsync(name, func (print : (t : Text) -> ()) : async* Bool { await* test() });
+    };
+
     public func itp(name : Text, test : Test) : NamedTest {
         #Test(name, test);
+    };
+
+    public func itsp(name : Text, test : TestAsync) : NamedTest {
+        #TestAsync(name, test);
     };
 
     public class Suite() {
@@ -43,13 +56,13 @@ module {
             debugPrint(s # t);
         };
 
-        public func run(tests : [NamedTest]) {
-            _run(tests);
+        public func run(tests : [NamedTest]) : async* () {
+            await* _run(tests);
             debugPrint("");
             s.printStatus();
         };
 
-        private func _run(tests : [NamedTest]) {
+        private func _run(tests : [NamedTest]) : async* () {
             for (k in tests.keys()) {
                 let t = tests[k];
                 switch (t) {
@@ -57,12 +70,22 @@ module {
                         print("");
                         print("📄 " # name);
                         indent += 1;
-                        _run(tests);
+                        await* _run(tests);
                         indent -= 1;
                     };
                     case (#Test(name, test)) {
                         if (k != 0) print("");
                         if (test(print)) {
+                            print(debug_show(k) # ". 🟢 " # name);
+                            s.pass();
+                        } else {
+                            print(debug_show(k) #  ". 🛑 " # name);
+                            s.fail();
+                        };
+                    };
+                    case (#TestAsync(name, test)) {
+                        if (k != 0) print("");
+                        if (await* test(print)) {
                             print(debug_show(k) # ". 🟢 " # name);
                             s.pass();
                         } else {

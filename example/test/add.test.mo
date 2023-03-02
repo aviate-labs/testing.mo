@@ -19,7 +19,7 @@ s.before(func (s : State) {
     s.a := 10;
 });
 
-s.run([
+await* s.run([
     describe("Add", [
         itp("add 2", equal(
             testifyElement(Testify.nat, 12), 
