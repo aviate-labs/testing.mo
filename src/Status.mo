@@ -13,6 +13,10 @@ module {
         public func printStatus() {
             let total = debug_show(_pass + _fail);
             debugPrint("🟢 " # debug_show(_pass) # "/" # total # " | 🛑 " # debug_show(_fail) # "/" # total # "\n");
+            switch (_fail) {
+                case (0) {};
+                case (_) assert(false);
+            };
         };
     };
 };

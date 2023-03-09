@@ -39,8 +39,16 @@ module {
         #Test(name, func (state : T, print : (t : Text) -> ()) : Bool = test(state));
     };
 
+    public func its<T>(name : Text, test : (state : T) -> async* Bool) : NamedTest<T> {
+        #TestAsync(name, func (state : T, print : (t : Text) -> ()) : async* Bool { await* test(state) });
+    };
+
     public func itp<T>(name : Text, test : Test<T>) : NamedTest<T> {
         #Test(name, test);
+    };
+
+    public func itsp<T>(name : Text, test : TestAsync<T>) : NamedTest<T> {
+        #TestAsync(name, test);
     };
 
     private func doNothing<T>() : Testing<T> { func (_ : T) {} };
